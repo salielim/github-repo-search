@@ -19,18 +19,21 @@ $(document).ready(function(){
           var description = data.items[i].description;
 
           $("#search-result").prepend(
-            "<h4><a id='infoBtn'>" + ownerName + "</a></h4>" + 
-            "<div id='infoDiv'><b>Language:</b> " + language 
-            + "</br><b>URL:</b> " + url 
-            + "</br><b>Description:</b> " + description 
-            + "</br></div>"
+            `<div class="results">
+              <h4><a class="owner">${ ownerName }</a></h4>
+              <div class="details hidden">
+                <b>Language: </b>${ language }
+                </br><b>URL: </b>${ url }
+                </br><b>Description: </b>${ description }
+                </br>
+              </div>
+            </div>`
           );
-          
-          $('#infoDiv').hide();
-          $("#infoBtn").click(function(){
-            $("#infoDiv").toggle();
-          });
         };
+        
+        $(".results").click(function(){
+          $(this).children().eq(1).toggleClass( "hidden" );
+        });
      },
       error: function(errorMessage){
         $("#search-result").prepend(
