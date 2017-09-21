@@ -17,17 +17,23 @@ $(document).ready(function(){
         console.log(data.items[0].full_name);
 
         for(var i=0; i<data.items.length; i++) {
-          $("#searchResult").prepend(data.items[i].full_name + "</br>");       
-        };
+          var ownerName = data.items[i].full_name;
+          var language = data.items[i].language;
+          var url = data.items[i].html_url;
+          var description = data.items[i].description;
 
-        // show 'language', 'followers', 'url', 'description' when clicked
-        console.log(data.items[0].language);
-        //console.log(data.items[0].followers);
-        console.log(data.items[0].html_url);
-        console.log(data.items[0].description); 
+          $("#searchResult").prepend("<h4><a id='infoBtn'>" + ownerName + "</a></h4>" + 
+          
+          "<div id='infoDiv'><b>Language:</b> " + language + "</br><b>URL:</b> " + url + "</br><b>Description:</b> " + description + "</br></div>");
+          
+          $('#infoDiv').hide();
+          $("#infoBtn").click(function(){
+            $("#infoDiv").toggle();
+          });
+        };
      },
       error: function(errorMessage){
-        alert("GET Error")
+        $("#searchResult").prepend("Sorry, there's an error. </br> Github API might be down..")
       }
     })
   })
