@@ -1,6 +1,15 @@
 $(document).ready(function(){
+  // Validation, input cannot be empty
+  $("#search-button").attr("disabled",true);
+  $("#search-query").keyup(function(){
+    if($(this).val().length !=0)
+        $("#search-button").attr('disabled', false);            
+    else
+        $("#search-button").attr('disabled',true);
+  })
+
+  // Get data using keyword
   $("#search-button").click(function(){
-    
     var searchQuery = $("#search-query").val();
     var url = "https://api.github.com/search/repositories?q=" + searchQuery;
     
@@ -10,6 +19,7 @@ $(document).ready(function(){
       async: true,
       dataType: "json",
       success: function(data) {
+        // Show no. of results
         var totalCount = data.total_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         $("#search-result").html("");
         $("#result-count").html(
@@ -18,6 +28,7 @@ $(document).ready(function(){
           </small>`
         );
 
+        // Loop each search result
         for(var i=0; i<data.items.length; i++) {
           var ownerName = data.items[i].full_name;
           var language = data.items[i].language;
@@ -58,6 +69,7 @@ $(document).ready(function(){
           );
         };
         
+        // Toggle repo cards
         $(".results").click(function(){
           $(this).children().eq(1).toggleClass( "hidden" );
         });
