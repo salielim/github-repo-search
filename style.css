@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css?family=Inconsolata|Rajdhani:700');
+
+h1 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 39px;
+  text-align: center;
+}
+
+h4 {
+  font-family: 'Inconsolata', monospace;
+}
+
+img {
+  width: 300px;
+  margin: 0 auto 0 15px;
+}
+
+.container {
+  width: 350px;
+  margin: 0 auto;
+}
+
+.container:hover {
+  cursor: pointer;
+}
+
+.results {
+  border: 1px solid #CCCCCC;
+  border-radius: 3px;
+  padding: 15px;
+  margin-top: 15px;
+}
+
+.results:hover {
+  cursor: pointer;
+  background-color: #f6f6f6;
+}
+
+.owner:hover {
+  cursor: pointer;
+}
+
+.glyphicon-eye-open {
+  text-align: right;
+}
