@@ -1,5 +1,7 @@
 $(document).ready(function(){
-  // Validation, input cannot be empty
+  $('#loading-div').hide();
+
+  // Disable search button if input is empty
   $("#search-button").attr("disabled",true);
   $("#search-query").keyup(function(){
     if($(this).val().length !=0)
@@ -18,6 +20,8 @@ $(document).ready(function(){
       url: url,
       async: true,
       dataType: "json",
+      beforeSend: function() { $('#loading-div').show(); },
+      complete: function() { $('#loading-div').hide(); },
       success: function(data) {
         // Show no. of results
         var totalCount = data.total_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
