@@ -15,9 +15,13 @@ img {
   margin: 0 auto 0 15px;
 }
 
+small {
+  margin-left: 5px;
+}
+
 .container {
   width: 350px;
-  margin: 0 auto;
+  margin: 5% auto;
 }
 
 .container:hover {

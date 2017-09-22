@@ -10,7 +10,13 @@ $(document).ready(function(){
       async: true,
       dataType: "json",
       success: function(data) {
+        var totalCount = data.total_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         $("#search-result").html("");
+        $("#result-count").html(
+          `<small class="text-muted">
+            Showing 30 of ${ totalCount } results
+          </small>`
+        );
 
         for(var i=0; i<data.items.length; i++) {
           var ownerName = data.items[i].full_name;
@@ -57,7 +63,7 @@ $(document).ready(function(){
         });
       },
       error: function(errorMessage){
-        $("#search-result").append(
+        $("#search-result").html(
           "Sorry there's an error, GitHub API might be down.."
         )
       }
