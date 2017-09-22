@@ -14,6 +14,9 @@ $(document).ready(function(){
   $("#search-button").click(function(){
     var searchQuery = $("#search-query").val();
     var url = "https://api.github.com/search/repositories?q=" + searchQuery;
+
+    $("#result-count").html("");
+    $("#search-result").html("");
     
     $.ajax({
       type: "GET",
@@ -25,7 +28,6 @@ $(document).ready(function(){
       success: function(data) {
         // Show no. of results
         var totalCount = data.total_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        $("#search-result").html("");
         $("#result-count").html(
           `<small class="text-muted">
             Showing 30 of ${ totalCount } results
@@ -34,12 +36,23 @@ $(document).ready(function(){
 
         // Loop each search result
         for(var i=0; i<data.items.length; i++) {
+          
           var ownerName = data.items[i].full_name;
           var language = data.items[i].language;
           var followers = data.items[i].watchers;
           var url = data.items[i].html_url;
           var description = data.items[i].description;
 
+          // If value of language & description are null
+          if (language === null || language === undefined) {
+            var language = "No language";
+          }
+
+          if (description === null || description === undefined) {
+            var description = "No description";
+          }
+
+          // Append info
           $("#search-result").append(
             `<div class="results">
               <h4>
