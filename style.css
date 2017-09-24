@@ -9,10 +9,16 @@ h1 {
 
 h4 {
   font-family: 'Inconsolata', monospace;
+  word-wrap: break-word;
+  text-decoration: none;
 }
 
 small {
   margin-left: 5px;
+}
+
+.repo-url {
+  word-wrap: break-word;
 }
 
 .glyphicon-eye-open {
