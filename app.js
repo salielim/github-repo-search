@@ -1,19 +1,16 @@
 $(document).ready(function () {
-  $('#loading-div').hide();
+  $("#loading-div").hide();
 
   // Disable search button if input is empty
   $("#search-button").attr("disabled", true);
   $("#search-query").keyup(function () {
-    if ($(this).val().length != 0)
-      $("#search-button").attr('disabled', false);
-    else
-      $("#search-button").attr('disabled', true);
+    ($(this).val().length != 0) ? $("#search-button").attr("disabled", false) : $("#search-button").attr("disabled", true);
   })
 
   // Get data using keyword
   $("#search-button").click(function () {
     var searchQuery = $("#search-query").val();
-    var url = "https://api.github.com/search/repositories?q=" + searchQuery;
+    var url = `https://api.github.com/search/repositories?q=${searchQuery}`;
 
     $("#result-count").html("");
     $("#search-result").html("");
@@ -23,14 +20,14 @@ $(document).ready(function () {
       url: url,
       async: true,
       dataType: "json",
-      beforeSend: function () { $('#loading-div').show(); },
+      beforeSend: function () { $("#loading-div").show(); },
       success: function (data) {
         var totalCount = data.total_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
         // Show no. of results
         $("#result-count").html(
           `<small class="text-muted">
-            Top 30 of ${ totalCount} results
+            Top 30 of ${totalCount} results
           </small>`
         );
 
@@ -43,37 +40,38 @@ $(document).ready(function () {
           var url = data.items[i].html_url;
           var description = data.items[i].description;
           var languagesUrl = data.items[i].languages_url;
+          var languageHtml;
 
           // If values are null show no language / description
-          if (language === null || language === undefined) {
-            var language = "No language";
+          if (!language) {
+            var languageHtml = "No language";
+          } else {
+            $.ajax({
+              type: "GET",
+              url: languagesUrl,
+              async: false,
+              dataType: "json",
+              success: function (languagesData) {
+
+                var languages = Object.keys(languagesData);
+                languageHtml = "";
+                languages.slice(0, 6).forEach(function (language) {
+                  languageHtml += `<span class="label label-default pull-left x">${language}</span>`
+                });
+
+              },
+
+              error: function (errorMessage) {
+                $("#search-result").html(
+                  "Sorry, GitHub API might be down.."
+                )
+              }
+            });
           }
 
-          if (description === null || description === undefined) {
+          if (!description) {
             var description = "No description";
           }
-
-          // 2nd ajax call for list of languages
-          $.ajax({
-            type: "GET",
-            url: languagesUrl,
-            async: true,
-            dataType: "json",
-            success: function (languagesData) {
-
-              var languages = Object.keys(languagesData);
-
-              console.log(languages);
-
-              // Append languages
-              // ...
-            },
-            error: function (errorMessage) {
-              $("#search-result").html(
-                "Sorry, GitHub API might be down.."
-              )
-            }
-          });
 
           // Append repo info
           $("#search-result").append(
@@ -95,9 +93,7 @@ $(document).ready(function () {
                   ${description}
                 </br>
                 <hr>
-                  <span class="label label-default pull-left x">
-
-                  </span>
+                  ${languageHtml}
                   <p class="pull-right">
                     &nbsp${followers}
                   </p>
@@ -114,12 +110,10 @@ $(document).ready(function () {
           $(this).children().eq(1).toggleClass("hidden");
         });
       },
-      complete: function () { $('#loading-div').hide(); },
+      complete: function () { $("#loading-div").hide(); },
       error: function (errorMessage) {
-        $("#search-result").html(
-          "Sorry, GitHub API might be down.."
-        )
+        $("#search-result").html("Sorry, GitHub API might be down..")
       }
-    })
-  })
-})
+    });
+  });
+});
