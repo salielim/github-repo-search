@@ -13,8 +13,8 @@ The AJAX call is slow as a lot of unused data is returned and two different call
 ## Bonus Questions
 1) Let's say we told you your app needs to search yet another repository, together with Github. What considerations will you make when update your app?
 
-This has been implemented in the app, when another search is made the html of the containers are cleared
- `$("#search-result").html("”);`
+This has been implemented in the app, when another search is made the html of the containers are cleared.
+ `$("#search-result").html("");`
 
 2) How would your app deal with the Github API going down?
 
