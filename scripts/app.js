@@ -1,17 +1,49 @@
-$(document).ready(function () {
-  $("#loading-div").hide();
+var resultsHtml = function resultsHtml(ownerName, url, description, languageHtml, followers) {
+  return `<div class="results">
+    <h4>
+      <a class="owner">
+        ${ ownerName }
+        <span class="glyphicon glyphicon glyphicon-info-sign pull-right" aria-hidden="true"></span>
+      </a>
+    </h4>
 
+    <div class="details hidden">
+      <hr>
+        <a href="${ url }" target="blank" class="repo-url">
+          ${ url }
+          <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+        </a>
+    </br>
+      ${ description }
+    </br>
+    <hr>
+      ${ languageHtml }
+      <p class="pull-right">
+        &nbsp${ followers }
+      </p>
+      <span class="glyphicon glyphicon-eye-open pull-right"></span>
+    </br>
+  </div>
+</div >`
+};
+
+$(document).ready(function () {
+  var totalPages = 0;
+
+  // Hide loading div 
+  $("#loading-div").hide();
+  
   // Disable search button if input is empty
   $("#search-button").attr("disabled", true);
   $("#search-query").keyup(function () {
     ($(this).val().length != 0) ? $("#search-button").attr("disabled", false) : $("#search-button").attr("disabled", true);
   })
 
-  // Get data using keyword
-  $("#search-button").click(function () {
+    
+  var search = function search(page) {
     var searchQuery = $("#search-query").val();
-    var url = `https://api.github.com/search/repositories?q=${searchQuery}`;
-
+    var url = `https://api.github.com/search/repositories?q=${ searchQuery }&per_page=5&page=${ page }`;
+    
     $("#result-count").html("");
     $("#search-result").html("");
 
@@ -22,12 +54,17 @@ $(document).ready(function () {
       dataType: "json",
       beforeSend: function () { $("#loading-div").show(); },
       success: function (data) {
-        var totalCount = data.total_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
+        var recordsPerPage = 5;
+        var totalRecords = data.total_count;
+        var pages = Math.ceil(totalRecords/recordsPerPage);
+        totalPages = data.total_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        totalPages = Math.floor(parseInt(totalPages.replace(/\s/g, "").replace(",", "")) / recordsPerPage)
+        var resultsShowing = (totalPages > recordsPerPage ) ? `${ recordsPerPage }` : totalPages;
+        
         // Show no. of results
         $("#result-count").html(
           `<small class="text-muted">
-            Top 30 of ${totalCount} results
+            Showing page ${ page } of ${ totalPages } results
           </small>`
         );
 
@@ -75,45 +112,34 @@ $(document).ready(function () {
 
           // Append repo info
           $("#search-result").append(
-            `<div class="results">
-                <h4>
-                  <a class="owner">
-                    ${ownerName}
-                    <span class="glyphicon glyphicon glyphicon-info-sign pull-right" aria-hidden="true"></span>
-                  </a>
-                </h4>
-
-                <div class="details hidden">
-                  <hr>
-                    <a href="${url}" target="blank" class="repo-url">
-                      ${url}
-                      <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
-                    </a>
-                </br>
-                  ${description}
-                </br>
-                <hr>
-                  ${languageHtml}
-                  <p class="pull-right">
-                    &nbsp${followers}
-                  </p>
-                  <span class="glyphicon glyphicon-eye-open
-                    pull-right"></span>
-                </br>
-              </div>
-            </div >`
+            resultsHtml(ownerName, url, description, languageHtml, followers)
           );
         };
+
+        $(".pagination").jqPagination({
+          max_page: (totalPages),
+          paged: function(page) {
+            console.log(page);
+            search(page);
+          }
+        });
 
         // Toggle repo cards
         $(".results").click(function () {
           $(this).children().eq(1).toggleClass("hidden");
         });
       },
-      complete: function () { $("#loading-div").hide(); },
+      complete: function () { 
+        $("#loading-div").hide();
+        $(".pagination").css("display","block");
+      },
       error: function (errorMessage) {
         $("#search-result").html("Sorry, GitHub API might be down..")
       }
     });
+  };
+
+  $("#search-button").click(function () {
+    search(1); //load page 1
   });
 });

@@ -20,16 +20,17 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
   <!-- app.js -->
-  <script src="app.js"></script>
+  <script src="scripts/app.js"></script>
+  <script src="scripts/jqpagination.js"></script>
 </head>
 <body>
   <div class="container">
-    <div>
+    <div class="image-container">
       <img src ="assets/images/octocat.png">
       <h1>GitHub Repo Search</h1>
     </div>
     <!-- Search Input -->
-    <div class="input-group">
+    <div class="input-group search-input-container">
       <input type="text" class="form-control" placeholder="Search for repositories using keyword" id="search-query">
       <span class="input-group-btn">
         <button class="btn btn-default" type="button" id="search-button">
@@ -40,11 +41,19 @@
     <div id="loading-div">
       <!-- Loading div -->
     </div>
-    <div id="result-count">
+    <div id="result-count" class="results-top">
       <!-- No. of results -->
     </div>
     <div id="search-result">
       <!-- List of results -->
+    </div>
+
+    <div class="pagination">
+      <a href="#" class="first" data-action="first">&laquo;</a>
+      <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+      <input type="text" readonly="readonly" data-max-page="40" />
+      <a href="#" class="next" data-action="next">&rsaquo;</a>
+      <a href="#" class="last" data-action="last">&raquo;</a>
     </div>
   </div>
 </body>
