@@ -38,8 +38,6 @@ $(document).ready(function () {
   $("#search-query").keyup(function () {
     ($(this).val().length != 0) ? $("#search-button").attr("disabled", false) : $("#search-button").attr("disabled", true);
   })
-
-    
   var search = function search(page) {
     var searchQuery = $("#search-query").val();
     var url = `https://api.github.com/search/repositories?q=${ searchQuery }&per_page=5&page=${ page }`;
@@ -56,16 +54,17 @@ $(document).ready(function () {
       success: function (data) {
         var recordsPerPage = 5;
         var totalRecords = data.total_count;
-        var pages = Math.ceil(totalRecords/recordsPerPage);
-        totalPages = data.total_count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        totalPages = Math.floor(parseInt(totalPages.replace(/\s/g, "").replace(",", "")) / recordsPerPage)
+        totalCount = totalRecords.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        totalPages = Math.floor(parseInt(totalRecords / recordsPerPage));
         var resultsShowing = (totalPages > recordsPerPage ) ? `${ recordsPerPage }` : totalPages;
         
         // Show no. of results
         $("#result-count").html(
-          `<small class="text-muted">
-            Showing page ${ page } of ${ totalPages } results
-          </small>`
+          `<p class="text-muted">
+            Page ${ page } of ${ totalPages }
+            </br>
+            (${ totalRecords } results)
+          </p>`
         );
 
         // Loop each search result
@@ -119,7 +118,6 @@ $(document).ready(function () {
         $(".pagination").jqPagination({
           max_page: (totalPages),
           paged: function(page) {
-            console.log(page);
             search(page);
           }
         });
@@ -140,6 +138,6 @@ $(document).ready(function () {
   };
 
   $("#search-button").click(function () {
-    search(1); //load page 1
+    search(1); // load page 1
   });
 });
