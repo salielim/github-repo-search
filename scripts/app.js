@@ -1,4 +1,5 @@
-var resultsHtml = function resultsHtml(ownerName, url, description, languageHtml, followers) {
+// Show information of each repo
+function resultsHtml(ownerName, url, description, languageHtml, followers) {
   return `<div class="results">
     <h4>
       <a class="owner">
@@ -28,8 +29,6 @@ var resultsHtml = function resultsHtml(ownerName, url, description, languageHtml
 };
 
 $(document).ready(function () {
-  var totalPages = 0;
-
   // Hide loading div 
   $("#loading-div").hide();
   
@@ -38,7 +37,9 @@ $(document).ready(function () {
   $("#search-query").keyup(function () {
     ($(this).val().length != 0) ? $("#search-button").attr("disabled", false) : $("#search-button").attr("disabled", true);
   })
-  var search = function search(page) {
+  
+  // Search function
+  function search(page) {
     var searchQuery = $("#search-query").val();
     var url = `https://api.github.com/search/repositories?q=${ searchQuery }&per_page=5&page=${ page }`;
     
@@ -53,23 +54,33 @@ $(document).ready(function () {
       beforeSend: function () { $("#loading-div").show(); },
       success: function (data) {
         var recordsPerPage = 5;
-        var totalRecords = data.total_count;
-        totalCount = totalRecords.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        totalPages = Math.floor(parseInt(totalRecords / recordsPerPage));
-        var resultsShowing = (totalPages > recordsPerPage ) ? `${ recordsPerPage }` : totalPages;
+        var totalRecords = (data.total_count > 1000) ? 1000 : data.total_count; // only first 1000 results available
+        var totalCount = totalRecords.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        var pagesCount = Math.floor(parseInt(totalRecords / recordsPerPage));
+        var totalPages = (pagesCount > 200) ? 200 : (pagesCount === 0) ? 1 : pagesCount; // only first 200 pages available
+
+        // Pagination
+        $(".pagination").jqPagination({
+          max_page: (totalPages),
+          paged: function(page) {
+            search(page);
+          }
+        });
         
-        // Show no. of results
+        // Show no. of pages & results
         $("#result-count").html(
           `<p class="text-muted">
-            Page ${ page } of ${ totalPages }
-            </br>
-            (${ totalRecords } results)
+            Page ${ page } of ${ totalPages } (${ totalRecords } results)
           </p>`
         );
 
+        // If no results show message
+        if (totalRecords === 0) {
+          $("#search-result").html("No results found for this keyword..");
+        }
+
         // Loop each search result
         for (var i = 0; i < data.items.length; i++) {
-
           var ownerName = data.items[i].full_name;
           var language = data.items[i].language;
           var followers = data.items[i].watchers.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -78,7 +89,7 @@ $(document).ready(function () {
           var languagesUrl = data.items[i].languages_url;
           var languageHtml;
 
-          // If values are null show no language / description
+          // If value null, show no language
           if (!language) {
             var languageHtml = "No language";
           } else {
@@ -105,6 +116,7 @@ $(document).ready(function () {
             });
           }
 
+          // If description null, show no description
           if (!description) {
             var description = "No description";
           }
@@ -114,13 +126,6 @@ $(document).ready(function () {
             resultsHtml(ownerName, url, description, languageHtml, followers)
           );
         };
-
-        $(".pagination").jqPagination({
-          max_page: (totalPages),
-          paged: function(page) {
-            search(page);
-          }
-        });
 
         // Toggle repo cards
         $(".results").click(function () {
@@ -138,6 +143,8 @@ $(document).ready(function () {
   };
 
   $("#search-button").click(function () {
+    $(".pagination").load(location.href + " .pagination"); // reset pagination
+    var totalPages = 0;
     search(1); // load page 1
   });
 });
