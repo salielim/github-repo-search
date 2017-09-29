@@ -17,32 +17,12 @@ h4 {
   word-wrap: break-word;
 }
 
-.glyphicon-eye-open {
-  text-align: right;
-}
-
-.results-top {
-  text-align: center;
-  margin-top: 50px;
-}
-
 .text-muted {
   font-size: 16px;
 }
 
-input{
-  text-align: center;
-}
-
-.pagination-controls:hover {
-  cursor: text;
-  background-color: #f6f6f6;
-}
-
-/* Images */
-img {
-  width: 300px;
-  margin: 0 auto 0 15px;
+.glyphicon-eye-open {
+  text-align: right;
 }
 
 /* Containers, Divs */
@@ -60,7 +40,7 @@ img {
   margin: 30px auto 0 auto;
 }
 
-.results {
+.results-container {
   border: 1px solid #CCCCCC;
   border-radius: 3px;
   padding: 15px 15px 36px 15px;
@@ -68,13 +48,24 @@ img {
   cursor: pointer;
 }
 
-.results:hover {
+.results-container:hover {
   cursor: pointer;
   background-color: #f6f6f6;
 }
 
-.owner:hover {
-  cursor: pointer;
+.results-count-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* Images & Elements */
+img {
+  width: 300px;
+  margin: 0 auto 0 15px;
+}
+
+input{
+  text-align: center;
 }
 
 .label {
@@ -84,6 +75,15 @@ img {
 .pagination {
   display: none;
   text-align: center;
+}
+
+.pagination-controls:hover {
+  cursor: text;
+  background-color: #f6f6f6;
+}
+
+.owner:hover {
+  cursor: pointer;
 }
 
 /* Loading spinner */

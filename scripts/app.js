@@ -1,6 +1,6 @@
 // Show information of each repo
 function resultsHtml(ownerName, url, description, languageHtml, followers) {
-  return `<div class="results">
+  return `<div class="results-container">
     <h4>
       <a class="owner">
         ${ ownerName }
@@ -128,7 +128,7 @@ $(document).ready(function () {
         };
 
         // Toggle repo cards
-        $(".results").click(function () {
+        $(".results-container").click(function () {
           $(this).children().eq(1).toggleClass("hidden");
         });
       },
