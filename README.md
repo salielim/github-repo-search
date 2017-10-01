@@ -4,6 +4,8 @@ Single page JavaScript application that allows one to search Github.com for repo
 ## Why jQuery
 I used HTML, CSS and jQuery instead of a framework like Angular or React as it’s a small app with 2 AJAX calls and renders a set of static data. I didn’t need to reuse components, manipulate states, use RESTful API or MVC support, etc.
 
+**EDIT:** I wished I have used a framework as I added more features, jQuery can be quite verbose.
+
 ## Limitations
 There are some limitations to this app - only the 30 most popular results are returned and the there’s a rate limit of 60 calls hourly. Would have to do pagination for more than 30 results, and get authenticated API for a higher rate limit.
 

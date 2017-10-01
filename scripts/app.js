@@ -1,26 +1,26 @@
-// Show information of each repo
+// Show information of each repo in resultsHtml
 function resultsHtml(ownerName, url, description, languageHtml, followers) {
   return `<div class="results-container">
     <h4>
       <a class="owner">
-        ${ ownerName }
+        ${ownerName}
         <span class="glyphicon glyphicon glyphicon-info-sign pull-right" aria-hidden="true"></span>
       </a>
     </h4>
 
     <div class="details hidden">
       <hr>
-        <a href="${ url }" target="blank" class="repo-url">
-          ${ url }
+        <a href="${ url}" target="blank" class="repo-url">
+          ${url}
           <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
         </a>
     </br>
-      ${ description }
+      ${description}
     </br>
     <hr>
-      ${ languageHtml }
+      ${languageHtml}
       <p class="pull-right">
-        &nbsp${ followers }
+        &nbsp${followers}
       </p>
       <span class="glyphicon glyphicon-eye-open pull-right"></span>
     </br>
@@ -28,21 +28,51 @@ function resultsHtml(ownerName, url, description, languageHtml, followers) {
 </div >`
 };
 
+// On Page Load
 $(document).ready(function () {
+  // Variables for automatic search
+  var typingTimer;
+  var doneTypingInterval = 800;
+  var $input = $("#search-query");
+
   // Hide loading div 
   $("#loading-div").hide();
-  
-  // Disable search button if input is empty
+
+  // Disable search button if there's no input
   $("#search-button").attr("disabled", true);
   $("#search-query").keyup(function () {
     ($(this).val().length != 0) ? $("#search-button").attr("disabled", false) : $("#search-button").attr("disabled", true);
-  })
-  
+
+  // Reset pagination & search
+  function resetPagSearch() {
+    $(".pagination").load(location.href + " .pagination"); // reset pagination
+    var totalPages = 0;
+    search(1); // load page 1
+  }
+
+  // Automatically search when user finished typing
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(doneTyping, doneTypingInterval);
+
+  $input.on("keydown", function () {
+    clearTimeout(typingTimer);
+  });
+
+  function doneTyping() {
+    resetPagSearch();
+  }
+
+  // Search when search button is clicked
+  $("#search-button").click(function () {
+    resetPagSearch();
+  });
+})
+
   // Search function
   function search(page) {
     var searchQuery = $("#search-query").val();
-    var url = `https://api.github.com/search/repositories?q=${ searchQuery }&per_page=5&page=${ page }`;
-    
+    var url = `https://api.github.com/search/repositories?q=${searchQuery}&per_page=5&page=${page}`;
+
     $("#result-count").html("");
     $("#search-result").html("");
 
@@ -62,15 +92,15 @@ $(document).ready(function () {
         // Pagination
         $(".pagination").jqPagination({
           max_page: (totalPages),
-          paged: function(page) {
+          paged: function (page) {
             search(page);
           }
         });
-        
+
         // Show no. of pages & results
         $("#result-count").html(
           `<p class="text-muted">
-            Page ${ page } of ${ totalPages } (${ totalRecords } results)
+            Page ${ page} of ${totalPages} (${totalRecords} results)
           </p>`
         );
 
@@ -112,6 +142,7 @@ $(document).ready(function () {
                 $("#search-result").html(
                   "Sorry, GitHub API might be down.."
                 )
+                $(".pagination").css("display", "hidden");
               }
             });
           }
@@ -132,19 +163,13 @@ $(document).ready(function () {
           $(this).children().eq(1).toggleClass("hidden");
         });
       },
-      complete: function () { 
+      complete: function () {
         $("#loading-div").hide();
-        $(".pagination").css("display","block");
+        $(".pagination").css("display", "block");
       },
       error: function (errorMessage) {
         $("#search-result").html("Sorry, GitHub API might be down..")
       }
     });
   };
-
-  $("#search-button").click(function () {
-    $(".pagination").load(location.href + " .pagination"); // reset pagination
-    var totalPages = 0;
-    search(1); // load page 1
-  });
 });
